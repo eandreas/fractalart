@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "fractalart"
+  site-url: "https://eandreas.github.io/fractalart"
+  description: "Generative art based on fractals"
+  repo-branch: main
+  repo-url: "https://github.com/eandreas/fractalart"
