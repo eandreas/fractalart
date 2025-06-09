@@ -2,4 +2,8 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_core.ipynb
+      - section: core
+        contents:
+          - core/00_core.ipynb
+          - core/01_image.ipynb
+        href: core/index.ipynb

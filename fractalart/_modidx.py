@@ -5,4 +5,5 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://eandreas.github.io',
                 'git_url': 'https://github.com/eandreas/fractalart',
                 'lib_path': 'fractalart'},
-  'syms': {'fractalart.core': {'fractalart.core.foo': ('core.html#foo', 'fractalart/core.py')}}}
+  'syms': { 'fractalart.core': {'fractalart.core.foo': ('core/core.html#foo', 'fractalart/core.py')},
+            'fractalart.core.image': {'fractalart.core.image.foo': ('core/image.html#foo', 'fractalart/core/image.py')}}}
