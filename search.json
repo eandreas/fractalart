@@ -1,0 +1,74 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "fractalart",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation.",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "fractalart",
+    "section": "Developer Guide",
+    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall fractalart in Development mode\n# make sure fractalart package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to fractalart\n$ nbdev_prepare",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "fractalart",
+    "section": "Usage",
+    "text": "Usage\n\nInstallation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/eandreas/fractalart.git\nor from conda\n$ conda install -c eandreas fractalart\nor from pypi\n$ pip install fractalart\n\n\nDocumentation\nDocumentation can be found hosted on this GitHub repository’s pages. Additionally you can find package manager specific guidelines on conda and pypi respectively.",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "fractalart",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "core/core.html",
+    "href": "core/core.html",
+    "title": "core",
+    "section": "",
+    "text": "source\n\nfoo\n\n foo ()",
+    "crumbs": [
+      "core",
+      "core"
+    ]
+  },
+  {
+    "objectID": "core/image.html",
+    "href": "core/image.html",
+    "title": "image",
+    "section": "",
+    "text": "The autoreload extension is already loaded. To reload it, use:\n  %reload_ext autoreload\n\n\n\nsource\n\nfoo\n\n foo ()",
+    "crumbs": [
+      "core",
+      "image"
+    ]
+  },
+  {
+    "objectID": "core/index.html",
+    "href": "core/index.html",
+    "title": "fractalart",
+    "section": "",
+    "text": "1+1\n\n2",
+    "crumbs": [
+      "core"
+    ]
+  }
+]
