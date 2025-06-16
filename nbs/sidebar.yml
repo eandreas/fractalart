@@ -4,6 +4,7 @@ website:
       - index.ipynb
       - section: core
         contents:
-          - core/00_core.ipynb
           - core/01_image.ipynb
-        href: core/index.ipynb
+      - section: fractals
+        contents:
+          - fractals/01_fractal.ipynb
