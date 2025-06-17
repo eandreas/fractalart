@@ -11,35 +11,39 @@ import numpy as np
 
 # %% ../nbs/core/01_image.ipynb 5
 class Image(ABC):
-    "Abstract base class for image rendering and manipulation."
+    """Abstract base class for image rendering and manipulation."""
 
     def __init__(self, width: int = 800, height: int = 800):
-        "Initialize an image with a given resolution."
-        if width <= 0 or height <= 0:
-            raise ValueError("width and height must be positive integers.")
+        """Initialize an image with a given resolution."""
+        self._validate_resolution(width, height)
         self._width = width
         self._height = height
-        # TODO: use float instead of np.float32
-        self._image = np.zeros((self._height, self._width), dtype=float)
+        self._image = self._create_blank_image()
+
+    @staticmethod
+    def _validate_resolution(width: int, height: int):
+        if width <= 0 or height <= 0:
+            raise ValueError("Width and height must be positive integers.")
+
+    def _create_blank_image(self) -> np.ndarray:
+        """Create a blank (zero-initialized) image array."""
+        return np.zeros((self._height, self._width), dtype=float)
 
     @property
     def resolution(self) -> tuple[int, int]:
-        "Get the resolution (width, height) of the image."
+        """Get the resolution (width, height) of the image."""
         return self._width, self._height
 
     @resolution.setter
     def resolution(self, res: tuple[int, int]):
-        "Set a new resolution for the image and reset the image array."
+        """Set a new resolution for the image and reset the image array."""
         w, h = res
-        if w <= 0 or h <= 0:
-            raise ValueError("Resolution must be positive integers.")
-        self._width = w
-        self._height = h
-        # TODO: refactor not to reset image?
-        self._image = np.zeros((self._height, self._width), dtype=float)  # Reset image
+        self._validate_resolution(w, h)
+        self._width, self._height = w, h
+        self._image = self._create_blank_image()  # Optional: allow preserving image?
 
     def render(self) -> np.ndarray:
-        "Render the image using subclass-defined logic."
+        """Render the image using subclass-defined logic."""
         before = self._image.copy()
         self._render()
         if np.array_equal(before, self._image):
@@ -48,25 +52,23 @@ class Image(ABC):
 
     @abstractmethod
     def _render(self):
-        "Abstract method that subclasses must implement to generate image data."
+        """Abstract method that subclasses must implement to generate image data."""
         pass
 
     def image(self) -> np.ndarray:
-        "Return the current image data."
+        """Return the current image data."""
         return self._image
 
     def plot(self, cmap: str = "turbo"):
-        "Display the image using matplotlib."
+        """Display the image using matplotlib."""
         plt.figure(figsize=(10, 10))
         plt.imshow(self._image, cmap=cmap)
         plt.axis('off')
         plt.show()
 
     def equalize_histogram(self):
-        "Apply histogram equalization to the image."
-        hist, bins = np.histogram(self._image.flatten(), bins=512, density=True)
-        cdf = hist.cumsum()  # cumulative distribution function
-        cdf = cdf / cdf[-1]  # normalize to [0,1]
-        # Use linear interpolation of cdf to find new pixel values
-        image_flat = np.interp(self._image.flatten(), bins[:-1], cdf)
-        self._image = image_flat.reshape(self._image.shape)
+        """Apply histogram equalization to the image."""
+        flat = self._image.flatten()
+        hist, bins = np.histogram(flat, bins=512, density=True)
+        cdf = hist.cumsum() / hist.sum()  # Normalize to [0,1]
+        self._image = np.interp(flat, bins[:-1], cdf).reshape(self._image.shape)

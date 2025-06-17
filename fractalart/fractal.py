@@ -15,21 +15,32 @@ import matplotlib.pyplot as plt
 
 # %% ../nbs/fractals/01_fractal.ipynb 5
 class Fractal(Image):
-    def __init__(self, x_min: float = -2.0, x_max: float = 1.0, y_min: float = -1.5, y_max: float = 1.5, max_iter: int = 1000):
-        self._x_min = x_min
-        self._x_max = x_max
-        self._y_min = y_min
-        self._y_max = y_max
-        if max_iter <= 0:
-            raise ValueError("max_iter and height must be positive integers.")
-        self._max_iter = max_iter
+    """Abstract base class for generating fractal images."""
+
+    def __init__(
+        self,
+        width: int = 800,
+        height: int = 800,
+        x_min: float = -2.0,
+        x_max: float = 1.0,
+        y_min: float = -1.5,
+        y_max: float = 1.5,
+        max_iter: int = 1000,
+    ):
+        """Initialize the fractal with image resolution and complex plane bounds."""
+        super().__init__(width, height)
+        self._x_min, self._x_max = x_min, x_max
+        self._y_min, self._y_max = y_min, y_max
+        self.max_iter = max_iter  # Uses property setter for validation
 
     @abstractmethod
     def compute(self) -> np.ndarray:
+        """Abstract method to compute the fractal array. Must be implemented by subclasses."""
         pass
 
     @property
     def max_iter(self) -> int:
+        """Maximum number of iterations used in fractal computation."""
         return self._max_iter
 
     @max_iter.setter
@@ -39,19 +50,35 @@ class Fractal(Image):
         self._max_iter = value
 
     def plot(self, cmap: str = "turbo"):
-        """Plot the rendered image using matplotlib."""
+        """Display the rendered fractal image using matplotlib."""
         plt.figure(figsize=(10, 10))
-        plt.imshow(self._image, cmap=cmap, extent=[self._x_min, self._x_max, self._y_min, self._y_max])
+        plt.imshow(
+            self._image,
+            cmap=cmap,
+            extent=[self._x_min, self._x_max, self._y_min, self._y_max],
+            origin='lower'
+        )
+        plt.axis('off')
         plt.show()
 
     def set_zoom(self, zoom: float, center: tuple[float, float]):
-        delta = 2 / zoom
-        self._x_min, self._y_min = center[0] - delta, center[1] - delta
-        self._x_max, self._y_max = center[0] + delta, center[1] + delta
+        """
+        Zoom into the fractal at a specific center.
 
-    def _render(self) -> np.ndarray:
-        width, height = self.resolution
-        return self.compute()
+        Args:
+            zoom: Zoom factor (higher is closer).
+            center: (x, y) center coordinates in the complex plane.
+        """
+        if zoom <= 0:
+            raise ValueError("zoom must be a positive number.")
+        delta = 2 / zoom
+        cx, cy = center
+        self._x_min, self._x_max = cx - delta, cx + delta
+        self._y_min, self._y_max = cy - delta, cy + delta
+
+    def _render(self):
+        """Generate and store the fractal image using the subclass-defined `compute` method."""
+        self._image = self.compute()
 
 # %% ../nbs/fractals/01_fractal.ipynb 6
 @jit(nopython=True, parallel=True, fastmath=True)
@@ -90,5 +117,4 @@ def compute_mandelbrot(x_min, x_max, y_min, y_max, width, height, max_iter):
 class Mandelbrot(Fractal):
     def compute(self):
         width, height = self.resolution
-        self._image = compute_mandelbrot(self._x_min, self._x_max, self._y_min, self._y_max, self._width, self._height, self._max_iter)
-
+        return compute_mandelbrot(self._x_min, self._x_max, self._y_min, self._y_max, width, height, self._max_iter)
