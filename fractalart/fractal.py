@@ -9,7 +9,7 @@ __all__ = ['Fractal', 'compute_mandelbrot', 'Mandelbrot']
 from abc import abstractmethod
 import numpy as np
 from .core import Image
-from numba import jit, prange
+from numba import njit, prange
 import math
 import matplotlib.pyplot as plt
 
@@ -81,40 +81,49 @@ class Fractal(Image):
         self._image = self.compute()
 
 # %% ../nbs/fractals/01_fractal.ipynb 6
-@jit(nopython=True, parallel=True, fastmath=True)
-def compute_mandelbrot(x_min, x_max, y_min, y_max, width, height, max_iter):
-    result = np.zeros((height, width), dtype=float)
+@njit(parallel=True, fastmath=True)
+def compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, width: int, height: int, max_iter: int) -> np.ndarray:
+    # Allocate with float32 to halve memory bandwidth (optional)
+    result = np.zeros((height, width), dtype=np.float32)
 
-    scale_x = (x_max - x_min) / width
-    scale_y = (y_max - y_min) / height
+    dx = (x_max - x_min) / width
+    dy = (y_max - y_min) / height
 
-    log2 = math.log(2.0)
+    inv_log2 = 1.0 / math.log(2.0)   # for nu calculation
+    log2_const = math.log(2.0)
 
-    for y in prange(height):
-        zy = y_min + y * scale_y
-        for x in range(width):
-            zx = x_min + x * scale_x
-            zr, zi = 0.0, 0.0
-            cr, ci = zx, zy
-            n = 0
+    for j in prange(height):
+        zy = y_min + j * dy
+        for i in range(width):
+            zx = x_min + i * dx
+            zr = 0.0
+            zi = 0.0
+            cr = zx
+            ci = zy
+            iteration = 0
 
-            while zr * zr + zi * zi <= 4.0 and n < max_iter:
+            # Mandelbrot iteration
+            while zr * zr + zi * zi <= 4.0 and iteration < max_iter:
+                # (zr + i zi)^2 + c
                 zr2 = zr * zr - zi * zi + cr
                 zi = 2.0 * zr * zi + ci
                 zr = zr2
-                n += 1
+                iteration += 1
 
-            if n < max_iter:
+            if iteration < max_iter:
+                # smooth coloring
                 mag_sq = zr * zr + zi * zi
                 log_zn = 0.5 * math.log(mag_sq)
-                nu = math.log(log_zn / log2) / log2
-                result[y, x] = n + 1 - nu
+                nu = math.log(log_zn * inv_log2) * inv_log2
+                result[j, i] = iteration + 1 - nu
             else:
-                result[y, x] = n
+                result[j, i] = iteration
+
     return result
 
 
 class Mandelbrot(Fractal):
-    def compute(self):
-        width, height = self.resolution
-        return compute_mandelbrot(self._x_min, self._x_max, self._y_min, self._y_max, width, height, self._max_iter)
+    def compute(self) -> np.ndarray:
+        w, h = self.resolution
+        # pass resolution-consistent dims
+        return compute_mandelbrot(self._x_min, self._x_max, self._y_min, self._y_max, w, h, self._max_iter)
