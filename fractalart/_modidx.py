@@ -33,5 +33,5 @@ d = { 'settings': { 'branch': 'main',
                                     'fractalart.fractal.Mandelbrot': ('fractals/fractal.html#mandelbrot', 'fractalart/fractal.py'),
                                     'fractalart.fractal.Mandelbrot.compute': ( 'fractals/fractal.html#mandelbrot.compute',
                                                                                'fractalart/fractal.py'),
-                                    'fractalart.fractal.compute_mandelbrot': ( 'fractals/fractal.html#compute_mandelbrot',
-                                                                               'fractalart/fractal.py')}}}
+                                    'fractalart.fractal._compute_mandelbrot': ( 'fractals/fractal.html#_compute_mandelbrot',
+                                                                                'fractalart/fractal.py')}}}
