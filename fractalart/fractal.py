@@ -51,7 +51,8 @@ class Fractal(Image):
 
     def plot(self, cmap: str = "turbo"):
         """Display the rendered fractal image using matplotlib."""
-        plt.figure(figsize=(10, 10))
+        # TODO : Us lighter image plotting, e. g. using PIL.Image or cv2
+        plt.figure(figsize=(14, 14))
         plt.imshow(
             self._image,
             cmap=cmap,
@@ -60,7 +61,7 @@ class Fractal(Image):
         )
         plt.axis('off')
         plt.show()
-
+    
     def set_zoom(self, zoom: float, center: tuple[float, float]):
         """
         Zoom into the fractal at a specific center.
@@ -85,6 +86,7 @@ class Fractal(Image):
 def compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, width: int, height: int, max_iter: int) -> np.ndarray:
     # Allocate with float32 to halve memory bandwidth (optional)
     result = np.zeros((height, width), dtype=np.float32)
+    cross_trap = np.zeros((height, width), dtype=np.float32)
 
     dx = (x_max - x_min) / width
     dy = (y_max - y_min) / height
@@ -101,14 +103,22 @@ def compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, w
             cr = zx
             ci = zy
             iteration = 0
+            min_cross = 1e10
 
             # Mandelbrot iteration
-            while zr * zr + zi * zi <= 4.0 and iteration < max_iter:
+            while iteration < max_iter:
+                # TODO : use zr * zr + zi * zi <= 4 and iteration < max_iter for classical fractal calculation without orbit traps
                 # (zr + i zi)^2 + c
                 zr2 = zr * zr - zi * zi + cr
                 zi = 2.0 * zr * zi + ci
                 zr = zr2
                 iteration += 1
+
+                # Cross trap: distance to real or imaginary axis
+                # TOTO : only take the min after a specific number of iterations , e. g. iteration > 3:
+                cross_dist = min(abs(zr), abs(zi))
+                if (cross_dist < min_cross):
+                    min_cross = cross_dist
 
             if iteration < max_iter:
                 # smooth coloring
@@ -119,7 +129,10 @@ def compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, w
             else:
                 result[j, i] = iteration
 
-    return result
+            cross_trap[j, i] = min_cross
+
+    #return result
+    return cross_trap
 
 
 class Mandelbrot(Fractal):

@@ -8,6 +8,7 @@ __all__ = ['Image']
 # %% ../nbs/core/01_image.ipynb 4
 from abc import ABC, abstractmethod
 import numpy as np
+import matplotlib.pyplot as plt
 
 # %% ../nbs/core/01_image.ipynb 5
 class Image(ABC):
@@ -63,7 +64,7 @@ class Image(ABC):
         """Display the image using matplotlib."""
         plt.figure(figsize=(10, 10))
         plt.imshow(self._image, cmap=cmap)
-        plt.axis('off')
+        plt.axis('on')
         plt.show()
 
     def equalize_histogram(self):
