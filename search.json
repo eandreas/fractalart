@@ -1,0 +1,64 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "fractalart",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation.",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "fractalart",
+    "section": "Developer Guide",
+    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall fractalart in Development mode\n# make sure fractalart package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to fractalart\n$ nbdev_prepare",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "fractalart",
+    "section": "Usage",
+    "text": "Usage\n\nInstallation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/eandreas/fractalart.git\nor from conda\n$ conda install -c eandreas fractalart\nor from pypi\n$ pip install fractalart\n\n\nDocumentation\nDocumentation can be found hosted on this GitHub repository’s pages. Additionally you can find package manager specific guidelines on conda and pypi respectively.",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "fractalart",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2",
+    "crumbs": [
+      "fractalart"
+    ]
+  },
+  {
+    "objectID": "fractals/fractal.html",
+    "href": "fractals/fractal.html",
+    "title": "fractal",
+    "section": "",
+    "text": "source\n\nFractal\n\n Fractal (width:int=800, height:int=800, x_min:float=-2.0,\n          x_max:float=1.0, y_min:float=-1.5, y_max:float=1.5,\n          max_iter:int=1000)\n\nAbstract base class for generating fractal images.\n\nsource\n\n\nMandelbrot\n\n Mandelbrot (width:int=800, height:int=800, x_min:float=-2.0,\n             x_max:float=1.0, y_min:float=-1.5, y_max:float=1.5,\n             max_iter:int=1000)\n\nAbstract base class for generating fractal images.\n\nsource\n\n\nJulia\n\n Julia (cr:float, ci:float, width:int=800, height:int=800,\n        x_min:float=-1.5, x_max:float=1.5, y_min:float=-1.5,\n        y_max:float=1.5, max_iter:int=1000)\n\nAbstract base class for generating fractal images.\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\ncr\nfloat\n\n\n\n\nci\nfloat\n\n\n\n\nwidth\nint\n800\n\n\n\nheight\nint\n800\n\n\n\nx_min\nfloat\n-1.5\noverride Fractal default\n\n\nx_max\nfloat\n1.5\noverride Fractal default\n\n\ny_min\nfloat\n-1.5\nkeep same (or change)\n\n\ny_max\nfloat\n1.5\nkeep same (or change)\n\n\nmax_iter\nint\n1000\nkeep same (or change)\n\n\n\n\nj = Julia(cr = -0.7, ci = 0.27015)\nj.resolution = 1200, 1200\nj.max_iter = 3000\nj.render()\nj.equalize_histogram()\nj.plot()\n\n\n\n\n\n\n\n\n\nj = Julia(cr = 0.355, ci = 0.355)\nj.resolution = 1200, 1200\nj.max_iter = 3000\nj.render()\nj.equalize_histogram()\nj.plot()\n\n\n\n\n\n\n\n\n\nj = Julia(cr = -0.4, ci = 0.6)\nj.resolution = 1200, 1200\nj.max_iter = 3000\nj.render()\nj.equalize_histogram()\nj.plot()\n\n\n\n\n\n\n\n\n\nj = Julia(cr = -0.8, ci = 0.156)\nj.resolution = 1200, 1200\nj.max_iter = 3000\nj.render()\nj.equalize_histogram()\nj.plot()\n\n\n\n\n\n\n\n\n\nm = Mandelbrot()\nm.resolution = 1200, 1200\nm.max_iter = 3000\nm.render()\nm.equalize_histogram()\nm.plot()\n\n\n\n\n\n\n\n\n\nm = Mandelbrot()\nm.resolution = 1200, 1200\nm.max_iter = 3000\n\n#m.set_zoom(5, (-0.170337,-1.06506))\n#m.set_zoom(25, (-0.170337,-1.06506))\n#m.set_zoom(125, (-0.170337,-1.06506))\n#m.set_zoom(625, (-0.170337,-1.06506))\n#m.set_zoom(3125, (-0.170337,-1.06506))\n#m.set_zoom(15625, (-0.170337,-1.06506))\n#m.set_zoom(78125, (-0.170337,-1.06506))\n\n#m.set_zoom(5, (0.42884,-0.231345))\n#m.set_zoom(25, (0.42884,-0.231345))\nm.set_zoom(125, (0.42884,-0.231345))\n#m.set_zoom(625, (0.42884,-0.231345))\n#m.set_zoom(3125, (0.42884,-0.231345))\n#m.set_zoom(15625, (0.42884,-0.231345))\n#m.set_zoom(78125, (0.42884,-0.231345))\n\n#m.set_zoom(5, (-1.62917,-0.0203968))\n#m.set_zoom(25, (-1.62917,-0.0203968))\n#m.set_zoom(125, (-1.62917,-0.0203968))\n#m.set_zoom(625, (-1.62917,-0.0203968))\n#m.set_zoom(3125, (-1.62917,-0.0203968))\n#m.set_zoom(15625, (-1.62917,-0.0203968))\n#m.set_zoom(78125, (-1.62917,-0.0203968))\n\n#m.set_zoom(5, (-0.761574,-0.0847596))\n#m.set_zoom(25, (-0.761574,-0.0847596))\n#m.set_zoom(125, (-0.761574,-0.0847596))\n#m.set_zoom(625, (-0.761574,-0.0847596))\n#m.set_zoom(3125, (-0.761574,-0.0847596))\n#m.set_zoom(15625, (-0.761574,-0.0847596))\n#m.set_zoom(78125, (-0.761574,-0.0847596))\n\nm.render()\nm.equalize_histogram()\nm.plot()\n\n\n\n\n\n\n\n\n\nclass Mandelbrot(Fractal):\n    def compute(self) -&gt; np.ndarray:\n        w, h = self.resolution\n        # pass resolution-consistent dims\n        return _compute_mandelbrot_set(self._x_min, self._x_max, self._y_min, self._y_max, w, h, self._max_iter)",
+    "crumbs": [
+      "fractals",
+      "fractal"
+    ]
+  },
+  {
+    "objectID": "core/image.html",
+    "href": "core/image.html",
+    "title": "image",
+    "section": "",
+    "text": "source\n\nImage\n\n Image (width:int=800, height:int=800)\n\nAbstract base class for image rendering and manipulation.",
+    "crumbs": [
+      "core",
+      "image"
+    ]
+  }
+]
