@@ -135,7 +135,6 @@ def _compute_mandelbrot_set(x_min: float, x_max: float, y_min: float, y_max: flo
     #return result
     return cross_trap
 
-
 class Mandelbrot(Fractal):
     def compute(self) -> np.ndarray:
         w, h = self.resolution
