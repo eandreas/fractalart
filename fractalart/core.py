@@ -28,7 +28,7 @@ class Image(ABC):
 
     def _create_blank_image(self) -> np.ndarray:
         """Create a blank (zero-initialized) image array."""
-        return np.zeros((self._height, self._width), dtype=float)
+        return np.zeros((self._height, self._width), dtype=np.float32)
 
     @property
     def resolution(self) -> tuple[int, int]:
@@ -56,6 +56,7 @@ class Image(ABC):
         """Abstract method that subclasses must implement to generate image data."""
         pass
 
+    @property
     def image(self) -> np.ndarray:
         """Return the current image data."""
         return self._image

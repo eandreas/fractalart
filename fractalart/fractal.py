@@ -155,7 +155,7 @@ def _compute_julia_set(xmin, xmax, ymin, ymax, width, height, cr, ci, max_iter):
             x = x0
             y = y0
             iteration = 0
-            while x*x + y*y <= 4.0 and iteration < max_iter:
+            while x*x + y*y <= 6.25 and iteration < max_iter:
                 x_temp = x*x - y*y + cr
                 y = 2.0 * x * y + ci
                 x = x_temp

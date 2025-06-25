@@ -65,3 +65,18 @@ Fill me in please! Don’t forget code examples:
 ```
 
     2
+
+``` python
+m = Julia(cr = -0.7, ci = 0.27015)
+```
+
+``` python
+m.render()
+m.equalize_histogram()
+```
+
+``` python
+m.plot()
+```
+
+![](index_files/figure-commonmark/cell-5-output-1.png)
