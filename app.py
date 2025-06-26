@@ -10,13 +10,17 @@ from fractalart.fractal import *
 # --- Enum Definition ---
 class FractalType(Enum):
     MANDELBROT = "Mandelbrot Set"
+    MANDELBROT_CROSS_TRAP = "Mandelbrot Set (Cross Trap)"
     JULIA = "Julia Set"
+    JULIA_CROSS_TRAP = "Julia Set (Cross Trap)"
 
 # --- Factory Function ---
 def create_fractal(fractal_type: FractalType) -> Fractal:
     fractal_classes = {
         FractalType.MANDELBROT: Mandelbrot,
+        FractalType.MANDELBROT_CROSS_TRAP: MandelbrotCrossTrap,
         FractalType.JULIA: Julia,
+        FractalType.JULIA_CROSS_TRAP: JuliaCrossTrap
     }
     return fractal_classes[fractal_type]()
 
