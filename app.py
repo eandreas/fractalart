@@ -27,7 +27,7 @@ x_max, y_max = center[0] + delta, center[1] + delta
 
 # Render the fractal
 m = Mandelbrot()
-m.resolution = res
+m.resolution = res, res
 m.set_zoom(zoom, (c_x, c_y))
 m.render()
 
