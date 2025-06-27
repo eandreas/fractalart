@@ -113,11 +113,16 @@ def _compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, 
                 iteration += 1
 
             if iteration < max_iter:
-                # smooth coloring
                 mag_sq = zr * zr + zi * zi
-                log_zn = 0.5 * math.log(mag_sq)
-                nu = math.log(log_zn * inv_log2) * inv_log2
-                result[j, i] = iteration + 1 - nu
+                if mag_sq > 0.0:
+                    log_zn = 0.5 * math.log(mag_sq)
+                    if log_zn > 0.0:
+                        nu = math.log(log_zn * inv_log2) * inv_log2
+                        result[j, i] = iteration + 1 - nu
+                    else:
+                        result[j, i] = iteration
+                else:
+                    result[j, i] = iteration
             else:
                 result[j, i] = iteration
 
