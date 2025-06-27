@@ -64,7 +64,7 @@ with st.sidebar:
             
     resolution = st.slider("Resolution", 100, 4000, 600, step=100)
     # max_iterations = st.slider("Max iterations", 100, 3000, 1000, step=100)
-    max_iterations = st.select_slider("Max iterations", options=[10, 100, 200, 500, 1000, 3000, 5000, 10000], value=200)
+    max_iterations = st.slider("Max iterations", 1, 10000, 300)
 
     st.text("Center position")
     center_x = x_min + (x_max - x_min) / 2

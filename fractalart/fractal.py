@@ -72,8 +72,12 @@ class Fractal(Image):
         """
         if zoom <= 0:
             raise ValueError("zoom must be a positive number.")
-        delta = 2 / zoom
+        #delta = 2 / zoom
+        #cx, cy = center
+        #self._x_min, self._x_max = cx - delta, cx + delta
+        #self._y_min, self._y_max = cy - delta, cy + delta
         cx, cy = center
+        delta = (self._x_max - self._x_min) / (2 * zoom)
         self._x_min, self._x_max = cx - delta, cx + delta
         self._y_min, self._y_max = cy - delta, cy + delta
 
