@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 class Image(ABC):
     """Abstract base class for image rendering and manipulation."""
 
-    def __init__(self, width: int = 800, height: int = 800):
+    def __init__(self, width: int = 1200, height: int = 1200):
         """Initialize an image with a given resolution."""
         self._validate_resolution(width, height)
         self._width = width
