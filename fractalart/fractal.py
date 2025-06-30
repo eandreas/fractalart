@@ -10,7 +10,7 @@ __all__ = ['Fractal', 'smooth_coloring', 'mandelbrot_step_1', 'mandelbrot_step_3
 from abc import abstractmethod
 import numpy as np
 from .core import Image
-from numba import njit, prange
+from numba import njit, prange, jit
 import math
 import matplotlib.pyplot as plt
 
@@ -72,7 +72,7 @@ def _compute_fractal(x_min: float, x_max: float, y_min: float, y_max: float, res
                      max_iter: int, fractal_fn, order: int = 1, smooth: bool = True) -> np.ndarray:
     
     width, height = resolution
-    result = np.zeros((height, width), dtype=np.float32)
+    result = np.zeros((height, width), dtype=np.float64)
     r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
 
     dx = (x_max - x_min) / (width - 1)
@@ -200,7 +200,7 @@ def julia_step(zr, zi, cr, ci):
     return mandelbrot_step(zr, zi, cr, ci)
 
 @njit
-def cross_dist(zr, zi):
+def cross_dist(zr: float, zi: float) -> float:
     return min(abs(zr), abs(zi))
 
 # %% ../nbs/fractals/01_fractal.ipynb 8
@@ -230,17 +230,13 @@ class Mandelbrot(Fractal):
 
 # %% ../nbs/fractals/01_fractal.ipynb 10
 @njit(parallel=True, fastmath=True)
-def _compute_orbit_trap(x_min: float, x_max: float, y_min: float, y_max: float, resolution: tuple[int, int],
-                     max_iter: int, fractal_fn, order: int, orbit_trap_fn) -> np.ndarray:
-    
-    width, height = resolution
-    #result = np.zeros((height, width), dtype=np.float32)
-    result = np.full((height, width), np.finfo(np.float32).max, dtype=np.float32)
-    r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
+def _compute_orbit_trap(x_min, x_max, y_min, y_max, resolution,
+                        max_iter, fractal_fn, order, orbit_trap_fn):
 
+    width, height = resolution
+    result = np.zeros((height, width), dtype=np.float64)
     dx = (x_max - x_min) / (width - 1)
     dy = (y_max - y_min) / (height - 1)
-    inv_log2 = 1.0 / math.log(2.0)
 
     for j in prange(height):
         zy = y_min + j * dy
@@ -251,16 +247,20 @@ def _compute_orbit_trap(x_min: float, x_max: float, y_min: float, y_max: float, 
             cr = zx
             ci = zy
             iteration = 0
-            min_cross = 1e10
+            min_cross = np.inf  # Use a proper "initial max"
 
             while iteration < max_iter:
                 zr, zi = fractal_fn(zr, zi, cr, ci, order)
                 iteration += 1
-                
-                if iteration > 0:
-                    cross_dist = orbit_trap_fn(zr, zi)
-                    if (cross_dist < min_cross):
-                        min_cross = cross_dist
+
+                # needed for fastmath = True in njit
+                if math.isnan(zr) or math.isnan(zi) or math.isinf(zr) or math.isinf(zi):
+                    break  # Or handle differently
+
+                if iteration > 1:
+                    dist = orbit_trap_fn(zr, zi)
+                    if dist < min_cross:
+                        min_cross = dist
 
             result[j, i] = min_cross
 

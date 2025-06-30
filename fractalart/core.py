@@ -28,7 +28,7 @@ class Image(ABC):
 
     def _create_blank_image(self) -> np.ndarray:
         """Create a blank (zero-initialized) image array."""
-        return np.zeros((self._height, self._width), dtype=np.float32)
+        return np.zeros((self._height, self._width), dtype=np.float64)
 
     @property
     def resolution(self) -> tuple[int, int]:
