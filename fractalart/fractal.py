@@ -4,7 +4,8 @@
 
 # %% auto 0
 __all__ = ['Fractal', 'smooth_coloring', 'mandelbrot_step_1', 'mandelbrot_step_3', 'mandelbrot_step_4', 'mandelbrot_step_5',
-           'mandelbrot_step_n', 'mandelbrot_step', 'julia_step', 'cross_dist', 'Mandelbrot', 'MandelbrotCrossTrap']
+           'mandelbrot_step_n', 'mandelbrot_step', 'julia_step', 'cross_dist', 'newton_step', 'newton_fn',
+           'newton_derivative_fn', 'compute_roots_of_unity', 'Mandelbrot', 'MandelbrotCrossTrap', 'Newton']
 
 # %% ../nbs/fractals/01_fractal.ipynb 4
 from abc import abstractmethod
@@ -203,6 +204,105 @@ def julia_step(zr, zi, cr, ci):
 def cross_dist(zr: float, zi: float) -> float:
     return min(abs(zr), abs(zi))
 
+@njit
+def newton_step(zr, zi, cr, ci, order, fractal_fn, fractal_derivative_fn):
+    """
+    Perform one Newton iteration step on complex z = zr + i*zi:
+    z_next = z - f(z) / f'(z)
+    
+    Parameters:
+        zr, zi : float - real and imaginary parts of current z
+        cr, ci : float - parameters (e.g., constants in fractal)
+        order : int - order of fractal
+        fractal_fn : function - f(z), returns (fr, fi)
+        fractal_derivative_fn : function - f'(z), returns (dr, di)
+        
+    Returns:
+        (zr_next, zi_next): next iteration complex number
+    """
+    # Compute f(z)
+    fr, fi = newton_fn(zr, zi, cr, ci, order)
+    # Compute f'(z)
+    dr, di = newton_derivative_fn(zr, zi, cr, ci, order)
+    
+    # Compute denominator = |f'(z)|^2
+    denom = dr*dr + di*di
+    if denom == 0.0:
+        # Avoid division by zero - just return current z
+        return zr, zi
+    
+    # Complex division (f / f') = (fr + i fi) / (dr + i di)
+    # (a+bi)/(c+di) = ((ac+bd) + i(bc - ad)) / (c^2 + d^2)
+    real_part = (fr*dr + fi*di) / denom
+    imag_part = (fi*dr - fr*di) / denom
+    
+    # Newton step: z_next = z - f(z)/f'(z)
+    zr_next = zr - real_part
+    zi_next = zi - imag_part
+    
+    return zr_next, zi_next
+
+@njit
+def newton_fn(zr, zi, cr, ci, order):
+    """
+    Compute f(z) = z^order - 1
+    where z = zr + i zi
+    
+    Returns: (fr, fi) real and imaginary parts of f(z)
+    """
+    # Compute z^order
+    zr_pow = 1.0
+    zi_pow = 0.0
+    for _ in range(order):
+        # multiply (zr_pow + i zi_pow) * (zr + i zi)
+        temp = zr_pow * zr - zi_pow * zi
+        zi_pow = zr_pow * zi + zi_pow * zr
+        zr_pow = temp
+    
+    # f(z) = z^order - 1
+    fr = zr_pow - 1.0
+    fi = zi_pow
+    
+    return fr, fi
+
+
+@njit
+def newton_derivative_fn(zr, zi, cr, ci, order):
+    """
+    Compute f'(z) = order * z^(order - 1)
+    where z = zr + i zi
+    
+    Returns: (dr, di) real and imaginary parts of f'(z)
+    """
+    if order == 1:
+        # derivative of z^1 - 1 is 1
+        return 1.0, 0.0
+    
+    # Compute z^(order - 1)
+    zr_pow = 1.0
+    zi_pow = 0.0
+    for _ in range(order - 1):
+        # multiply (zr_pow + i zi_pow) * (zr + i zi)
+        temp = zr_pow * zr - zi_pow * zi
+        zi_pow = zr_pow * zi + zi_pow * zr
+        zr_pow = temp
+    
+    # Multiply by order
+    dr = order * zr_pow
+    di = order * zi_pow
+    
+    return dr, di
+
+@njit
+def compute_roots_of_unity(order):
+    roots_real = np.empty(order, dtype=np.float64)
+    roots_imag = np.empty(order, dtype=np.float64)
+    for k in range(order):
+        angle = 2.0 * math.pi * k / order
+        roots_real[k] = math.cos(angle)
+        roots_imag[k] = math.sin(angle)
+    return roots_real, roots_imag
+
 # %% ../nbs/fractals/01_fractal.ipynb 8
 class Mandelbrot(Fractal):
     def __init__(
@@ -290,3 +390,28 @@ class MandelbrotCrossTrap(Fractal):
         w, h = self.resolution
         return _compute_orbit_trap(self._x_min, self._x_max, self._y_min, self._y_max,
                                 self.resolution, self._max_iter, mandelbrot_step, self._order, cross_dist)
+
+# %% ../nbs/fractals/01_fractal.ipynb 14
+class Newton(Fractal):
+    def __init__(
+        self,
+        x_min: float = -2.0,
+        x_max: float = 2.0,
+        y_min: float = -2.0,
+        y_max: float = 2.0,
+        width: int = 600,
+        height: int = 600,
+        max_iter: int = 200,
+        order: int = 3
+    ):
+        """Initialize the fractal with image resolution and complex plane bounds."""
+        self._x_min, self._x_max = x_min, x_max
+        self._y_min, self._y_max = y_min, y_max
+        self.resolution = width, height
+        self.max_iter = max_iter
+        self._order = order
+        
+    def compute(self) -> np.ndarray:
+        w, h = self.resolution
+        return _compute_newton(self._x_min, self._x_max, self._y_min, self._y_max, self.resolution, self.max_iter,
+                               self._order, newton_fn, newton_derivative_fn)
