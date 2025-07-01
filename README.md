@@ -73,4 +73,6 @@ m.equalize_histogram()
 m.plot()
 ```
 
-![](index_files/figure-commonmark/cell-3-output-1.png)
+    OMP: Info #276: omp_set_nested routine deprecated, please use omp_set_max_active_levels instead.
+
+![](index_files/figure-commonmark/cell-3-output-2.png)
