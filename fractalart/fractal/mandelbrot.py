@@ -155,6 +155,5 @@ class Mandelbrot(Fractal):
         self.max_iter = max_iter
         
     def compute(self) -> np.ndarray:
-        w, h = self.resolution
         return _compute_mandelbrot(self._x_min, self._x_max, self._y_min, self._y_max,
                                 self.resolution, self._max_iter, mandelbrot_step, self._order)

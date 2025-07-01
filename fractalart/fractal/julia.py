@@ -16,40 +16,6 @@ import math
 from .abstract_fractal import Fractal
 
 # %% ../../nbs/fractals/03_julia.ipynb 5
-@njit(parallel=True, fastmath=True)
-def _compute_fractal(x_min: float, x_max: float, y_min: float, y_max: float, resolution: tuple[int, int],
-                     max_iter: int, fractal_fn, order: int = 1, smooth: bool = True) -> np.ndarray:
-    
-    width, height = resolution
-    result = np.zeros((height, width), dtype=np.float64)
-    r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
-
-    dx = (x_max - x_min) / (width - 1)
-    dy = (y_max - y_min) / (height - 1)
-    inv_log2 = 1.0 / math.log(2.0)
-
-    for j in prange(height):
-        zy = y_min + j * dy
-        for i in range(width):
-            zx = x_min + i * dx
-            zr = 0.0
-            zi = 0.0
-            cr = zx
-            ci = zy
-            iteration = 0
-
-            while zr * zr + zi * zi <= r2_cut and iteration < max_iter:
-                zr, zi = fractal_fn(zr, zi, cr, ci, order)
-                iteration += 1
-
-            if smooth and iteration < max_iter:
-                result[j, i] = smooth_coloring(zr, zi, iteration)
-            else:
-                result[j, i] = iteration
-
-    return result
-
-# %% ../../nbs/fractals/03_julia.ipynb 6
 _inv_log2 = 1.0 / math.log(2.0)
 
 @njit
@@ -67,4 +33,42 @@ def smooth_coloring(zr, zi, iteration):
     
 @njit
 def julia_step(zr, zi, cr, ci):
-    return mandelbrot_step(zr, zi, cr, ci)
+    zr2 = zr * zr
+    zi2 = zi * zi
+    zr_new = zr2 - zi2 + cr
+    zi_new = 2.0 * zr * zi + ci
+    return zr_new, zi_new
+
+# %% ../../nbs/fractals/03_julia.ipynb 6
+@njit(parallel=True, fastmath=True)
+def _compute_julia(x_min: float, x_max: float, y_min: float, y_max: float, cr: float, ci: float, resolution: tuple[int, int],
+                     max_iter: int, fractal_fn, order: int = 1, smooth: bool = True) -> np.ndarray:
+    
+    width, height = resolution
+    result = np.zeros((height, width), dtype=np.float64)
+    r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
+
+    dx = (x_max - x_min) / (width - 1)
+    dy = (y_max - y_min) / (height - 1)
+    inv_log2 = 1.0 / math.log(2.0)
+
+    for j in prange(height):
+        zy = y_min + j * dy
+        for i in range(width):
+            zx = x_min + i * dx
+            zr = zx
+            zi = zy
+            cr = cr
+            ci = ci
+            iteration = 0
+
+            while zr * zr + zi * zi <= r2_cut and iteration < max_iter:
+                zr, zi = fractal_fn(zr, zi, cr, ci)
+                iteration += 1
+
+            if smooth and iteration < max_iter:
+                result[j, i] = smooth_coloring(zr, zi, iteration)
+            else:
+                result[j, i] = iteration
+
+    return result
