@@ -19,7 +19,7 @@ def _compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, 
     
     width, height = resolution
     result = np.zeros((height, width), dtype=np.float64)
-    r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
+    #r2_cut = max(abs(x_max), abs(x_min)) * max(abs(x_max), abs(x_min)) + max(abs(y_max), abs(y_min)) * max(abs(y_max), abs(y_min))
 
     dx = (x_max - x_min) / (width - 1)
     dy = (y_max - y_min) / (height - 1)
@@ -35,7 +35,8 @@ def _compute_mandelbrot(x_min: float, x_max: float, y_min: float, y_max: float, 
             ci = zy
             iteration = 0
 
-            while zr * zr + zi * zi <= r2_cut and iteration < max_iter:
+            #while zr * zr + zi * zi <= r2_cut and iteration < max_iter:
+            while zr * zr + zi * zi <= 4.0 and iteration < max_iter:
                 zr, zi = fractal_fn(zr, zi, cr, ci, order)
                 iteration += 1
 
